@@ -1,3 +1,4 @@
+require("dotenv").config();
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -13,7 +14,9 @@ var config = require("./config");
 var indexRouter = require("./routes/index");
 
 //>
-mongoose.connect(config.dbConfString, { useMongoClient: true });
+mongoose.connect(process.env.MONGODB_URI || config.dbConfString, {
+  useMongoClient: true
+});
 global.User = require("./models/users");
 //>
 var app = express();
