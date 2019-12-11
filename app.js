@@ -20,13 +20,16 @@ mongoose.connect(process.env.MONGODB_URI || config.dbConfString, {
 global.User = require("./models/users");
 //>
 var app = express();
+app.use(cors());
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//================>
 app.use(express.static(path.join(__dirname, "build")));
 app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+//=================>
 app.use(fileUpload());
-//app.use("/uploads", express.static("uploads"));
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");

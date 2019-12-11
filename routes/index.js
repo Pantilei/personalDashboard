@@ -17,13 +17,15 @@ router.route("/").get(authToken, function(req, res, next) {
     } else {
       res.json({
         userId: authData.userId,
-        username: authData.username
+        username: authData.username,
+        token: req.token
       });
     }
   });
 });
 
 router.route("/signup").post(function(req, res, next) {
+  console.log(req.body);
   User.find({ email: req.body.email }).then(user => {
     if (user.length >= 1) {
       return res.status(200).json({
@@ -107,7 +109,7 @@ router.route("/login").post(function(req, res, next) {
   });
 });
 
-router.route("/images").post(authToken, function(req, res, next) {
+router.route("/photos").post(authToken, function(req, res, next) {
   jwt.verify(req.token, config.sekretKey, function(err, authData) {
     /* console.log(authData); */
 
@@ -135,8 +137,12 @@ router.route("/images").post(authToken, function(req, res, next) {
   });
 });
 
-router.route("/images").get(authToken, function(req, res, next) {
+router.route("/photos").get(authToken, function(req, res, next) {
+  console.log("========");
   jwt.verify(req.token, config.sekretKey, function(err, authData) {
+    if (err) {
+      return res.status(401).json({ error: "No user!!!" });
+    }
     User.find({ _id: authData.userId }).then(user => {
       return res.json({
         userId: authData.userId,
