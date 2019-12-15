@@ -7,7 +7,8 @@ var userSchema = new mongoose.Schema({
   hash: String,
   salt: String,
   image: { type: String, required: true },
-  uploadedImages: { type: Array }
+  uploadedImages: { type: Array },
+  tasks: { type: Array }
 });
 
 userSchema.methods.setPassword = function(password) {

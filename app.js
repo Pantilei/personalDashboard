@@ -24,10 +24,20 @@ app.use(cors());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //================>
-app.use(express.static(path.join(__dirname, "build")));
-app.get("*", function(req, res) {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+app.use(express.static(path.join(__dirname, "client/build")));
+//CHEK THIS CODE, IT CAUSES ERROR ON RELOAD OF PAGE//Solved by putting to end of file
+/* if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+  app.get("*", (req, res) => {
+    res.sendfile(path.join((__dirname = "client/build/index.html")));
+  });
+}
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/public/index.html"));
+}); */
+/* app.get("*", function(req, res) {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+}); */
 //=================>
 app.use(fileUpload());
 // view engine setup
@@ -64,6 +74,16 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
+});
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+  app.get("*", (req, res) => {
+    res.sendfile(path.join((__dirname = "client/build/index.html")));
+  });
+}
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/public/index.html"));
 });
 
 module.exports = app;

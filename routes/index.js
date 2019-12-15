@@ -153,4 +153,42 @@ router.route("/photos").get(authToken, function(req, res, next) {
   });
 });
 
+router.route("/tasks").post(authToken, function(req, res, next) {
+  jwt.verify(req.token, config.sekretKey, function(err, authData) {
+    if (err) {
+      return res.status(401).json({ error: "No user!!! Go to login page!" });
+    }
+    User.update(
+      { _id: authData.userId },
+      {
+        $set: {
+          [`tasks.${req.body.taskId}`]: {
+            task: req.body.task,
+            status: req.body.status
+          }
+        }
+      }
+    ).then(result => {
+      console.log(result);
+      User.findOne({ _id: authData.userId }).then(user => {
+        return res.json({ tasks: user.tasks });
+      });
+    });
+  });
+});
+router.route("/tasks").get(authToken, function(req, res, next) {
+  jwt.verify(req.token, config.sekretKey, function(err, authData) {
+    if (err) {
+      return res.status(401).json({ error: "No user!!! Go to login page!" });
+    }
+    User.findOne({ _id: authData.userId }).then(user => {
+      return res.json({
+        userId: authData.userId,
+        username: authData.username,
+        tasks: user.tasks
+      });
+    });
+  });
+});
+
 module.exports = router;
